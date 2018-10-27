@@ -8,18 +8,20 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return new MaterialApp(
       title: 'Clave de Fala',
+      debugShowCheckedModeBanner: false,
       theme: new ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or press Run > Flutter Hot Reload in IntelliJ). Notice that the
-        // counter didn't reset back to zero; the application is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: new MyHomePage(title: 'Esboço Clave de Fala'),
+          primarySwatch: Colors.pink,
+          primaryColor: Color(0xFFFAFAFA),
+          accentColor: Colors.blue[900],
+          backgroundColor: Color(0xFFFAFAFA),
+          fontFamily: 'Montserrat',
+          primaryTextTheme: TextTheme(
+              title: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.blue[900],
+            fontSize: 32.0,
+          ))),
+      home: new MyHomePage(title: 'Clave de Fala'),
     );
   }
 }
@@ -35,10 +37,11 @@ class MyHomePage extends StatefulWidget {
 
 // One entry in the multilevel list displayed by this app.
 class Entry {
-  Entry(this.title, [this.children = const <Entry>[]]);
+  Entry(this.title, this.icon, this.color);
 
   final String title;
-  final List<Entry> children;
+  final IconData icon;
+  final int color;
 }
 
 // Displays one Entry. If the entry has children then it's displayed
@@ -48,63 +51,66 @@ class EntryItem extends StatelessWidget {
 
   final Entry entry;
 
-  Widget _buildTiles(Entry root) {
-    if (root.children.isEmpty) return ListTile(title: Text(root.title));
-    return ExpansionTile(
-      key: PageStorageKey<Entry>(root),
-      title: Text(root.title),
-      children: root.children.map(_buildTiles).toList(),
+  Widget _buildTile(Entry root) {
+    return Container(
+      child: Center(
+        child: ListTile(
+          leading: Icon(
+            root.icon,
+            color: Colors.white,
+          ),
+          title: Text(
+            root.title,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20.0,
+              fontFamily: 'Catamaran',
+            ),
+          ),
+        ),
+      ),
+      color: Color(root.color),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return _buildTiles(entry);
+    return _buildTile(this.entry);
   }
 }
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Entry> data = <Entry>[
     Entry(
-      'Saúde',
-      <Entry>[
-        Entry(
-          'Farmácia',
-          <Entry>[
-            Entry('Quero levantar esta receita, por favor.'),
-            Entry('Tem aspirina?'),
-            Entry('Tem algum medicamento para a tosse?'),
-          ],
-        ),
-        Entry('Hospital'),
-        Entry('Médico'),
-      ],
+      'Transportes',
+      Icons.directions_bus,
+      0xff9c27b0,
     ),
     Entry(
       'Compras',
-      <Entry>[
-        Entry('Quero fatura com NIF, por favor.'),
-        Entry('O meu NIF é 121291991.'),
-      ],
+      Icons.shopping_cart,
+      0xff2196f3,
     ),
     Entry(
       'Localizações',
-      <Entry>[
-        Entry('Onde estou?'),
-        Entry(
-          'Onde é...',
-          <Entry>[
-            Entry('Onde é a Associação Portuguesa de Limitados de Voz?'),
-            Entry('Onde é a Biblioteca mais próxima?'),
-            Entry('Onde é o Multibanco mais próximo?'),
-            Entry('Onde é a Farmácia mais próxima?'),
-          ],
-        ),
-      ],
+      Icons.map,
+      0xff4caf50,
     ),
     Entry(
-      'Entre outros...',
-    )
+      'Saúde',
+      Icons.local_hospital,
+      0xfff44336,
+    ),
+    Entry(
+      'Direitos',
+      Icons.contact_mail,
+      0xff009688,
+    ),
+    Entry(
+      'Bolo de chocolate',
+      Icons.cake,
+      0xff795548,
+    ),
   ];
 
   @override
@@ -112,16 +118,37 @@ class _MyHomePageState extends State<MyHomePage> {
     return new Scaffold(
       appBar: new AppBar(
         title: new Text(widget.title),
+        centerTitle: true,
       ),
-      body: ListView.builder(
-        itemBuilder: (BuildContext context, int index) =>
-            EntryItem(data[index]),
-        itemCount: data.length,
-      ),
-      floatingActionButton: new FloatingActionButton(
-        onPressed: null,
-        tooltip: 'Increment',
-        child: new Icon(Icons.add),
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: Column(
+              children: <Widget>[
+                Expanded(child: EntryItem(data[0])),
+                Expanded(child: EntryItem(data[1])),
+                Expanded(child: EntryItem(data[2])),
+                Expanded(child: EntryItem(data[3])),
+                Expanded(child: EntryItem(data[4])),
+                Expanded(child: EntryItem(data[5])),
+              ],
+            ),
+          ),
+          Column(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  "Uma frase sugerida é mostrada aqui e pode ser aceite com um clique!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20.0,
+                  ),
+                ),
+              )
+            ],
+          ),
+        ],
       ),
     );
   }
