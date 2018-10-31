@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 // Import de ficheiros nossos.
 import 'tag.dart';
+import 'phrase.dart';
+import 'motor.dart';
 
 void main() => runApp(new MyApp());
 
@@ -40,6 +42,13 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
+  String getResult() {
+    var motor = Motor();
+    motor.refresh(["Localizações", "Hospital", "Saúde"]);
+    return motor.getPhrases().toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -47,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: new Text(widget.title),
         centerTitle: true,
       ),
-      body: null,
+      body: Text(this.getResult()),
     );
   }
 }

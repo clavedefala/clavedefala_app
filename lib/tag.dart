@@ -7,6 +7,11 @@ class Tag {
   final String title;
   final IconData icon;
   final int color;
+
+  @override
+  String toString() {
+    return this.title;
+  }
 }
 
 // Classe para criação de Widget que representa uma tag.
