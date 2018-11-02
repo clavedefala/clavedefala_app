@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:swipedetector/swipedetector.dart';
 
 // Import de ficheiros nossos.
 import 'tag.dart';
@@ -42,12 +43,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
-  String getResult() {
-    var motor = Motor();
-    motor.refresh(["Localizações", "Hospital", "Saúde"]);
-    return motor.getPhrases().toString();
-  }
+  TagColumn tagColumn = TagColumn();
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +52,8 @@ class _MyHomePageState extends State<MyHomePage> {
         title: new Text(widget.title),
         centerTitle: true,
       ),
-      body: Text(this.getResult()),
+      body: this.tagColumn,
+
     );
   }
 }
