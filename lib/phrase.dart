@@ -1,5 +1,3 @@
-import 'tag.dart';
-
 // Classe que define uma Frase.
 // São escolhidas com base nas tags escolhidas.
 class Phrase {
@@ -14,10 +12,13 @@ class Phrase {
   }
 
   int comp(List<String> tags) {
-    int result = 0;
+    int result = tags.length;
+    if (result < this.tags.length) {
+      result = this.tags.length;
+    }
     for (String tag in tags) {
       if (this.tags.contains(tag)) {
-        result++;
+        result--;
       }
     }
     return result;
@@ -28,6 +29,3 @@ class Phrase {
     return this.phrase;
   }
 }
-
-// Criar uma frase.
-final frase = Phrase("Onde é o Hospital mais próximo?", ["Localizações", "Saúde", "Hospital"]);

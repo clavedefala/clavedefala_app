@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:swipedetector/swipedetector.dart';
 
 // Import de ficheiros nossos.
 import 'tag.dart';
-import 'phrase.dart';
-import 'motor.dart';
 
 void main() => runApp(new MyApp());
 
