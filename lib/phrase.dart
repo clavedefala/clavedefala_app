@@ -16,12 +16,14 @@ class Phrase {
     if (result < this.tags.length) {
       result = this.tags.length;
     }
+    int length = result;
+
     for (String tag in tags) {
       if (this.tags.contains(tag)) {
         result--;
       }
     }
-    return result;
+    return (result/length * 100000).round();
   }
 
   @override

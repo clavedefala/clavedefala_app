@@ -192,14 +192,16 @@ class _TagColumnState extends State<TagColumn> {
         this.stringTags.add(tag.toString());
         this.pastTags.add(this.tags);
         this.tags = tags;
+        this.motor.refresh(stringTags);
       });
     } else if (tags == null && tag != null) {
       setState(() {
         this.suggest = true;
         this.stringTags.add(tag.toString());
+        this.motor.refresh(stringTags);
       });
     }
-    this.motor.refresh(stringTags);
+
   }
 
   _goBack() {
