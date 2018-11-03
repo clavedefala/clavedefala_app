@@ -229,6 +229,7 @@ class _TagColumnState extends State<TagColumn> {
         setState(() {
           this.motor.refresh(this.stringTags);
         });
+        return false;
       } else if (pastTags.isNotEmpty) {
         this.stringTags.removeLast();
         setState(() {
@@ -236,12 +237,12 @@ class _TagColumnState extends State<TagColumn> {
           this.motor.refresh(this.stringTags);
         });
         this.pastTags.removeLast();
+        return false;
       }
-      print("_goBack successful");
-      return false;
+      return true;
     } catch (e) {
       print("_goBack with error " + e.toString());
-      return false;
+      return true;
     }
   }
 
