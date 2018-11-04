@@ -34,13 +34,17 @@ class TagItem extends StatelessWidget {
               color: Colors.white,
               size: 50.0,
             ),
-            title: Text(
-              this.tag.title,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 40.0,
-                fontFamily: 'Catamaran',
-                fontWeight: FontWeight.bold,
+            title: FittedBox(
+              alignment: FractionalOffset(0.0, 0.5),
+              fit: BoxFit.scaleDown,
+              child: Text(
+                this.tag.title,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 40.0,
+                  fontFamily: 'Catamaran',
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -88,7 +92,7 @@ class _TagColumnState extends State<TagColumn> {
         Icons.local_hospital,
         0xFFC02F1D,
         [
-          Tag("Hospital", Icons.local_hospital, 0xFF1287A8, null),
+          Tag("Hospital", Icons.local_hospital, 0xFF107896, null),
           Tag("Centro de Saúde", Icons.local_hospital, 0xFF1496BB, null),
           Tag("Farmácia", Icons.local_pharmacy, 0xFFA3B86C, null),
           Tag("Urgência", Icons.warning, 0xFFC02F1D, null)
@@ -109,13 +113,40 @@ class _TagColumnState extends State<TagColumn> {
                 Icons.local_hospital,
                 0xFFC02F1D,
                 [
-                  Tag("Hospital", Icons.local_hospital, 0xFF1287A8, null),
+                  Tag("Hospital", Icons.local_hospital, 0xFF107896, null),
                   Tag("Centro de Saúde", Icons.local_hospital, 0xFF1496BB,
                       null),
+                  Tag("Clínica", Icons.local_hospital, 0xFFF26D21, null),
                   Tag("Farmácia", Icons.local_pharmacy, 0xFFA3B86C, null),
+                  Tag("Veterinário", Icons.pets, 0xFFC02F1D, null),
+                ],
+              ),
+              Tag(
+                "Compras",
+                Icons.shopping_cart,
+                0xFFA3B86C,
+                [
+                  Tag(
+                    "Superfícies Comerciais",
+                    Icons.local_mall,
+                    0xFF107896,
+                    [
+                      Tag("Supermercado", Icons.shopping_cart, 0xFF1496BB,
+                          null),
+                      Tag("Mercado", Icons.shopping_cart, 0xFFA3B86C, null),
+                      Tag("Minimercado", Icons.shopping_cart, 0xFFC02F1D, null)
+                    ],
+                  ),
+                  Tag("Feira", Icons.local_activity, 0xFFC02F1D, null)
                 ],
               ),
             ],
+          ),
+          Tag(
+            "Táxi",
+            Icons.local_taxi,
+            0xFFEBC944,
+            null,
           ),
         ],
       ),
@@ -135,7 +166,11 @@ class _TagColumnState extends State<TagColumn> {
         "Compras",
         Icons.shopping_cart,
         0xFFA3B86C,
-        null,
+        [
+          Tag("Superfícies Comerciais", Icons.local_mall, 0xFF107896, null),
+          Tag("Feira", Icons.local_activity, 0xFFC02F1D, null),
+          Tag("Loja", Icons.shop, 0xFFA3B86C, null),
+        ],
       ),
       Tag(
         "Direções",
@@ -147,10 +182,12 @@ class _TagColumnState extends State<TagColumn> {
             Icons.local_hospital,
             0xFFC02F1D,
             [
-              Tag("Hospital", Icons.local_hospital, 0xFF1287A8, null),
+              Tag("Hospital", Icons.local_hospital, 0xFF107896, null),
               Tag("Centro de Saúde", Icons.local_hospital, 0xFF1496BB, null),
+              Tag("Clínica", Icons.local_hospital, 0xFFF26D21, null),
               Tag("Farmácia", Icons.local_pharmacy, 0xFFA3B86C, null),
-              Tag("Urgência", Icons.warning, 0xFFC02F1D, null)
+              Tag("Urgência", Icons.warning, 0xFFC02F1D, null),
+              Tag("Veterinário", Icons.pets, 0xFFEBC944, null)
             ],
           ),
           Tag(
@@ -168,14 +205,53 @@ class _TagColumnState extends State<TagColumn> {
                     Icons.local_hospital,
                     0xFFC02F1D,
                     [
-                      Tag("Hospital", Icons.local_hospital, 0xFF1287A8, null),
+                      Tag("Hospital", Icons.local_hospital, 0xFF107896, null),
                       Tag("Centro de Saúde", Icons.local_hospital, 0xFF1496BB,
                           null),
+                      Tag("Clínica", Icons.local_hospital, 0xFFF26D21, null),
                       Tag("Farmácia", Icons.local_pharmacy, 0xFFA3B86C, null),
+                      Tag("Veterinário", Icons.pets, 0xFFC02F1D, null),
                     ],
                   ),
                 ],
               ),
+              Tag("Táxi", Icons.local_taxi, 0xFFEBC944, null),
+            ],
+          ),
+          Tag(
+            "Compras",
+            Icons.shopping_cart,
+            0xFFA3B86C,
+            [
+              Tag("Superfícies Comerciais", Icons.local_mall, 0xFF107896, null),
+              Tag("Feira", Icons.local_activity, 0xFFC02F1D, null)
+            ],
+          ),
+          Tag(
+            "Viagem",
+            Icons.directions,
+            0xFFEBC944,
+            [
+              Tag("Minha Posição", Icons.person_pin_circle, 0xFF107896, null),
+              Tag("Destino", Icons.pin_drop, 0xFFC02F1D, null)
+            ],
+          ),
+          Tag(
+            "Alimentação",
+            Icons.fastfood,
+            0xFF1496BB,
+            [
+              Tag("Café", Icons.local_cafe, 0xFFA3B86C, null),
+              Tag(
+                "Restauração",
+                Icons.local_dining,
+                0xFF107896,
+                [
+                  Tag("Alergia", Icons.check_box, 0xFFC02F1D, null),
+                  Tag("Vegan", Icons.local_florist, 0xFF1496BB, null),
+                ],
+              ),
+              Tag("Bar", Icons.local_bar, 0xFFC02F1D, null),
             ],
           ),
         ],
@@ -201,7 +277,6 @@ class _TagColumnState extends State<TagColumn> {
         this.motor.refresh(stringTags);
       });
     }
-
   }
 
   _goBack() {
@@ -332,7 +407,10 @@ class _TagColumnState extends State<TagColumn> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(child: _buildColumn(), onWillPop: () => _goBackButton().then((bool value) => Future<bool>.value(value)));
+    return WillPopScope(
+        child: _buildColumn(),
+        onWillPop: () =>
+            _goBackButton().then((bool value) => Future<bool>.value(value)));
   }
 
   @override
