@@ -49,7 +49,7 @@ class Motor {
     Phrase("Existem mesas disponíveis?", ["Alimentação", "Restauração"]),
     Phrase("Gostava de marcar uma reserva.", ["Alimentação", "Restauração"]),
     // Compras.
-    Phrase("Qual é o preço deste produto?", ["Compras", "Superfícies Comerciasi", "Minimercado", "Mercado", "Supermercado", "Feira", "Loja"]),
+    Phrase("Qual é o preço deste produto?", ["Compras", "Superfícies Comerciais"]),
   ];
 
   refresh(List<String> tags) {

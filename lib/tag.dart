@@ -109,6 +109,48 @@ class PhraseItem extends StatelessWidget {
   }
 }
 
+// Classe para criação de Widget que representa um widget.
+class SmallPhraseItem extends StatelessWidget {
+  const SmallPhraseItem(this.phrase, this.color, this.tagColumn);
+
+  final String phrase;
+  final int color;
+  final _TagColumnState tagColumn;
+
+  Widget _buildPhrase(BuildContext context) {
+    return InkWell(
+      child: Container(
+        padding: EdgeInsets.only(
+          top: 8.0,
+          bottom: 8.0,
+        ),
+        child: Center(
+          child: Text(
+            this.phrase,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 20.0,
+              fontFamily: 'Catamaran',
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        color: Color(this.color),
+      ),
+      onTap: () {
+        this.tagColumn._speak(this.phrase);
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    assert(debugCheckHasMaterial(context));
+    return _buildPhrase(context);
+  }
+}
+
 class TagColumn extends StatefulWidget {
   @override
   _TagColumnState createState() => _TagColumnState();
@@ -560,16 +602,9 @@ class _TagColumnState extends State<TagColumn> {
             ),
           ),
           Container(
-            padding: EdgeInsets.fromLTRB(0.0, 8.0, 0.0, 8.0),
-            child: Text(
-              this.motor.getPhrases()[0],
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.clip,
-              style: TextStyle(
-                fontSize: 20.0,
-              ),
-            ),
-          )
+            child:
+                SmallPhraseItem(this.motor.getPhrases()[0], 0xFFFAFAFA, this),
+          ),
         ],
       );
     }
