@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'motor.dart';
+import 'phrase.dart';
 import 'dart:async';
 
 // Classe que define uma tag.
@@ -64,6 +65,48 @@ class TagItem extends StatelessWidget {
   }
 }
 
+// Classe para criação de Widget que representa um widget.
+class PhraseItem extends StatelessWidget {
+  const PhraseItem(this.phrase, this.color, this.tagColumn);
+
+  final String phrase;
+  final int color;
+  final _TagColumnState tagColumn;
+
+  Widget _buildTag(BuildContext context) {
+    return InkWell(
+      child: Container(
+        padding: EdgeInsets.only(
+          top: 16.0,
+          bottom: 16.0,
+        ),
+        child: Center(
+          child: Text(
+            this.phrase,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 30.0,
+              fontFamily: 'Catamaran',
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        color: Color(this.color),
+      ),
+      onTap: () {
+        this.tagColumn._speak(this.phrase);
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    assert(debugCheckHasMaterial(context));
+    return _buildTag(context);
+  }
+}
+
 class TagColumn extends StatefulWidget {
   @override
   _TagColumnState createState() => _TagColumnState();
@@ -83,6 +126,8 @@ class _TagColumnState extends State<TagColumn> {
   Motor motor;
 
   bool suggest = false;
+  bool speak = false;
+  String chosenPhrase;
 
   initialize() {
     // TODO: Escrever aqui todas as tags existentes.
@@ -323,8 +368,34 @@ class _TagColumnState extends State<TagColumn> {
     }
   }
 
+  _speak(String phrase) {
+    print(phrase);
+    setState(() {
+      this.chosenPhrase = phrase;
+      this.speak = true;
+    });
+  }
+
+  _dontSpeak() {
+    print("dont");
+    setState(() {
+      this.chosenPhrase = null;
+      this.speak = false;
+    });
+    this._goBack();
+  }
+
   Widget _buildColumn() {
-    if (suggest == true) {
+    if (speak == true) {
+      return InkWell(
+        child: Container(
+          child: Center(
+            child: Text(this.chosenPhrase),
+          ),
+        ),
+        onTap: this._dontSpeak(),
+      );
+    } else if (suggest == true) {
       var phraseList = <Widget>[];
       int color = 0xFFFAFAFA;
       for (String phrase in this.motor.getPhrases()) {
@@ -332,22 +403,7 @@ class _TagColumnState extends State<TagColumn> {
         if (phraseList.length.isOdd) {
           color = 0xFFEEEEEE;
         }
-        phraseList.add(
-          Container(
-            padding: EdgeInsets.fromLTRB(2.0, 8.0, 2.0, 8.0),
-            color: Color(color),
-            child: Center(
-              child: Text(
-                phrase,
-                textAlign: TextAlign.center,
-                overflow: TextOverflow.clip,
-                style: TextStyle(
-                  fontSize: 30.0,
-                ),
-              ),
-            ),
-          ),
-        );
+        phraseList.add(PhraseItem(phrase, color, this));
       }
       return Dismissible(
         key: Key("suggest"),
@@ -356,7 +412,11 @@ class _TagColumnState extends State<TagColumn> {
             this._goBack();
           });
         },
-        child: ListView(key: Key("suggest"), children: phraseList),
+        child: ListView(
+          physics: BouncingScrollPhysics(),
+          key: Key("suggest"),
+          children: phraseList,
+        ),
       );
     } else {
       var tagItems = <Widget>[];
