@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'motor.dart';
-import 'phrase.dart';
+
+import 'package:flutter_tts/flutter_tts.dart';
 import 'dart:async';
 
 // Classe que define uma tag.
@@ -73,7 +75,7 @@ class PhraseItem extends StatelessWidget {
   final int color;
   final _TagColumnState tagColumn;
 
-  Widget _buildTag(BuildContext context) {
+  Widget _buildPhrase(BuildContext context) {
     return InkWell(
       child: Container(
         padding: EdgeInsets.only(
@@ -103,7 +105,7 @@ class PhraseItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     assert(debugCheckHasMaterial(context));
-    return _buildTag(context);
+    return _buildPhrase(context);
   }
 }
 
@@ -111,6 +113,8 @@ class TagColumn extends StatefulWidget {
   @override
   _TagColumnState createState() => _TagColumnState();
 }
+
+enum TtsState { playing, stopped }
 
 // Classe que representa a coluna que mostra as tags atuais.
 class _TagColumnState extends State<TagColumn> {
@@ -129,7 +133,40 @@ class _TagColumnState extends State<TagColumn> {
   bool speak = false;
   String chosenPhrase;
 
+  FlutterTts flutterTts;
+  TtsState ttsState = TtsState.stopped;
+
+  get isPlaying => ttsState == TtsState.playing;
+
+  get isStopped => ttsState == TtsState.stopped;
+
+  initTts() async {
+    flutterTts = new FlutterTts();
+
+    flutterTts.setStartHandler(() {
+      setState(() {
+        ttsState = TtsState.playing;
+      });
+    });
+
+    flutterTts.setCompletionHandler(() {
+      setState(() {
+        ttsState = TtsState.stopped;
+      });
+    });
+
+    flutterTts.setErrorHandler((msg) {
+      setState(() {
+        ttsState = TtsState.stopped;
+      });
+    });
+
+    await flutterTts.setLanguage("pt-BR");
+  }
+
   initialize() {
+    this.initTts();
+
     // TODO: Escrever aqui todas as tags existentes.
     this.tags = [
       Tag(
@@ -325,6 +362,7 @@ class _TagColumnState extends State<TagColumn> {
   }
 
   _goBack() {
+    this._dontSpeak();
     if (this.suggest == true) {
       this.suggest = false;
       this.stringTags.removeLast();
@@ -345,6 +383,7 @@ class _TagColumnState extends State<TagColumn> {
 
   Future<bool> _goBackButton() async {
     try {
+      this._dontSpeak();
       if (this.suggest == true) {
         this.suggest = false;
         this.stringTags.removeLast();
@@ -368,9 +407,33 @@ class _TagColumnState extends State<TagColumn> {
     }
   }
 
+  Future _speakTTS() async {
+    var result = await flutterTts.speak(this.chosenPhrase);
+    if (result == 1) setState(() => ttsState = TtsState.playing);
+  }
+
+  Future _stopTTS() async {
+    var result = await flutterTts.stop();
+    if (result == 1) setState(() => ttsState = TtsState.stopped);
+  }
+
+  _ttsSpeak() {
+    print("TTS ON");
+    this._speakTTS();
+  }
+
+  _ttsStop() {
+    print("TTS STOPPED");
+    this._stopTTS();
+  }
+
   _speak(String phrase) {
     print(phrase);
     setState(() {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeRight,
+        DeviceOrientation.landscapeLeft,
+      ]);
       this.chosenPhrase = phrase;
       this.speak = true;
     });
@@ -378,22 +441,43 @@ class _TagColumnState extends State<TagColumn> {
 
   _dontSpeak() {
     print("dont");
+    this._ttsStop();
     setState(() {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeRight,
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
       this.chosenPhrase = null;
       this.speak = false;
     });
-    this._goBack();
   }
 
   Widget _buildColumn() {
     if (speak == true) {
       return InkWell(
         child: Container(
+          padding: EdgeInsets.only(
+            top: 16.0,
+            bottom: 16.0,
+          ),
           child: Center(
-            child: Text(this.chosenPhrase),
+            child: Text(
+              this.chosenPhrase,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 40.0,
+                fontFamily: 'Catamaran',
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ),
-        onTap: this._dontSpeak(),
+        onTap: () {
+          this._ttsSpeak();
+        },
       );
     } else if (suggest == true) {
       var phraseList = <Widget>[];
@@ -405,18 +489,34 @@ class _TagColumnState extends State<TagColumn> {
         }
         phraseList.add(PhraseItem(phrase, color, this));
       }
-      return Dismissible(
-        key: Key("suggest"),
-        onDismissed: (direction) {
-          setState(() {
-            this._goBack();
-          });
-        },
-        child: ListView(
-          physics: BouncingScrollPhysics(),
-          key: Key("suggest"),
-          children: phraseList,
-        ),
+      return Column(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.fromLTRB(0.0, 4.0, 0.0, 4.0),
+            child: Text(
+              this
+                  .stringTags
+                  .toString()
+                  .replaceAll("[", "")
+                  .replaceAll("]", ""),
+            ),
+          ),
+          Expanded(
+            child: Dismissible(
+              key: Key("suggest"),
+              onDismissed: (direction) {
+                setState(() {
+                  this._goBack();
+                });
+              },
+              child: ListView(
+                physics: BouncingScrollPhysics(),
+                key: Key("suggest"),
+                children: phraseList,
+              ),
+            ),
+          )
+        ],
       );
     } else {
       var tagItems = <Widget>[];
@@ -438,6 +538,16 @@ class _TagColumnState extends State<TagColumn> {
 
       return Column(
         children: <Widget>[
+          Container(
+            padding: EdgeInsets.fromLTRB(0.0, 4.0, 0.0, 4.0),
+            child: Text(
+              this
+                  .stringTags
+                  .toString()
+                  .replaceAll("[", "")
+                  .replaceAll("]", ""),
+            ),
+          ),
           Expanded(
             child: Dismissible(
               key: Key(this.tags.last.toString()),

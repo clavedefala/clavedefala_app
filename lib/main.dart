@@ -50,7 +50,6 @@ class _MyHomePageState extends State<MyHomePage> {
         centerTitle: true,
       ),
       body: this.tagColumn,
-
     );
   }
 }

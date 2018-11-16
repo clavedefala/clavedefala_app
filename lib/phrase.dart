@@ -23,7 +23,7 @@ class Phrase {
         result--;
       }
     }
-    return (result/length * 100000).round();
+    return (result / length * 100000).round();
   }
 
   @override
