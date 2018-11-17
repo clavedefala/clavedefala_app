@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'ClaveTextField.dart';
 import 'motor.dart';
 
 import 'package:flutter_tts/flutter_tts.dart';
@@ -173,6 +174,7 @@ class _TagColumnState extends State<TagColumn> {
 
   bool suggest = false;
   bool speak = false;
+  bool edit = false;
   String chosenPhrase;
 
   FlutterTts flutterTts;
@@ -404,7 +406,16 @@ class _TagColumnState extends State<TagColumn> {
   }
 
   _goBack() {
-    this._dontSpeak();
+    if (this.edit == true) {
+      setState(() {
+        this.edit = false;
+      });
+      return false;
+    }
+    if (this.speak == true) {
+      this._dontSpeak();
+      return false;
+    }
     if (this.suggest == true) {
       this.suggest = false;
       this.stringTags.removeLast();
@@ -420,12 +431,21 @@ class _TagColumnState extends State<TagColumn> {
       this.pastTags.removeLast();
     }
 
-    print("_goBack");
   }
 
   Future<bool> _goBackButton() async {
     try {
-      this._dontSpeak();
+      if (this.edit == true) {
+        setState(() {
+          this.edit = false;
+        });
+        return false;
+      }
+      if (this.speak == true) {
+        this._dontSpeak();
+        return false;
+      }
+
       if (this.suggest == true) {
         this.suggest = false;
         this.stringTags.removeLast();
@@ -496,8 +516,28 @@ class _TagColumnState extends State<TagColumn> {
     });
   }
 
+  _editPhrase() {
+    setState(() {
+      this.edit = true;
+    });
+  }
+
   Widget _buildColumn() {
-    if (speak == true) {
+    if (edit == true) {
+      return ClaveTextField(
+        initialValue: this.chosenPhrase,
+        autofocus: true,
+        onChanged: (String newPhrase) {
+          if (newPhrase != null)
+            this.chosenPhrase = newPhrase;
+        },
+        decoration: InputDecoration(
+          border: InputBorder.none,
+        ),
+        maxLines: 4,
+        onEditingComplete: _goBack,
+      );
+    } else if (speak == true) {
       return InkWell(
         child: Container(
           padding: EdgeInsets.only(
@@ -505,21 +545,19 @@ class _TagColumnState extends State<TagColumn> {
             bottom: 16.0,
           ),
           child: Center(
-            child: Text(
-              this.chosenPhrase,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 40.0,
-                fontFamily: 'Catamaran',
-                fontWeight: FontWeight.bold,
-              ),
+              child: Text(
+            this.chosenPhrase,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 40.0,
+              fontFamily: 'Catamaran',
+              fontWeight: FontWeight.bold,
             ),
-          ),
+            textAlign: TextAlign.center,
+          )),
         ),
-        onTap: () {
-          this._ttsSpeak();
-        },
+        onTap: _ttsSpeak,
+        onLongPress: _editPhrase,
       );
     } else if (suggest == true) {
       var phraseList = <Widget>[];
