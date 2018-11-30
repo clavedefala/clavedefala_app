@@ -42,6 +42,12 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   TagColumn tagColumn = TagColumn();
 
+  var drawerButtonTextStyle = TextStyle(
+    fontFamily: "Catamaran",
+    fontSize: 20.0,
+    fontWeight: FontWeight.bold,
+  );
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(

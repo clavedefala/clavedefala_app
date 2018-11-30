@@ -1,13 +1,46 @@
 import 'phrase.dart';
 
-// Classe que define uma Frase.
-// São escolhidas com base nas tags escolhidas.
+// Motor é responsável por sortear as frases em tempo real.
+// Deve devolver as 20 frases mais prováveis sempre que pedido.
 class Motor {
   Motor();
 
-  // As frases são criadas aqui.
-  // TODO: Criar frases.
+  // As frases são colocadas aqui.
   List<Phrase> phrases = [
+    //Saúde
+    Phrase("Tem parceria com ADSE?", ["Saúde", "Hospital"]),
+    Phrase("Tem parceria com ADSE?", ["Saúde", "Clínica"]),
+    Phrase("Tem parceria com ADSE?", ["Saúde", "Dentista"]),
+    Phrase("Quanto custa uma consulta?", ["Saúde", "Hospital"]),
+    Phrase("Quanto custa uma consulta?", ["Saúde", "Centro de Saúde"]),
+    Phrase("Quanto custa uma consulta?", ["Saúde", "Clínica"]),
+    Phrase("Quanto custa uma consulta?", ["Saúde", "Dentista"]),
+    Phrase("Quanto custa uma consulta?", ["Saúde", "Veterinário"]),
+    Phrase("Gostaria de marcar uma consulta.", ["Saúde", "Hospital"]),
+    Phrase("Gostaria de marcar uma consulta.", ["Saúde", "Clínica"]),
+    Phrase("Gostaria de marcar uma consulta.", ["Saúde", "Centro de Saúde"]),
+    Phrase("Gostaria de marcar uma consulta.", ["Saúde", "Veterinário"]),
+    Phrase("Gostaria de marcar uma consulta.", ["Saúde", "Dentista"]),
+    Phrase("Estou com dores na zona X.", ["Saúde", "Urgências"]),
+    Phrase("Estou com dores na zona X.", ["Saúde", "Hospital"]),
+    Phrase("Estou com dores na zona X.", ["Saúde", "Centro de Saúde"]),
+    Phrase("Estou com dores na zona X.", ["Saúde", "Dentista"]),
+    Phrase("Estou com dores na zona X.", ["Saúde", "Clínica"]),
+    Phrase("O animal está com dores na zona X.", ["Saúde", "Veterinário"]),
+    Phrase("Tem parceria com o Seguro de Saúde X?", ["Saúde", "Hospital"]),
+    Phrase("Tem parceria com o Seguro de Saúde X?", ["Saúde", "Clínica"]),
+    Phrase("Tem parceria com o Seguro de Saúde X?", ["Saúde", "Centro de Saúde"]),
+    Phrase("Tem parceria com o Seguro de Saúde X?", ["Saúde", "Dentista"]),
+    Phrase("Tem parceria com o Seguro de Saúde X?", ["Saúde", "Veterinário"]),
+    Phrase("Tenho consulta marcada.", ["Saúde", "Hospital"]),
+    Phrase("Tenho consulta marcada.", ["Saúde", "Clínica"]),
+    Phrase("Tenho consulta marcada.", ["Saúde", "Centro de Saúde"]),
+    Phrase("Tenho consulta marcada.", ["Saúde", "Dentista"]),
+    Phrase("Tenho consulta marcada.", ["Saúde", "Veterinário"]),
+    Phrase("Estou isento de taxas moderadoras.", ["Saúde", "Hospital"]),
+    Phrase("Estou isento de taxas moderadoras.", ["Saúde", "Centro de Saúde"]),
+    Phrase("Estou isento de taxas moderadoras.", ["Saúde", "Urgência"]),
+
     // Transportes.
     Phrase("Pode me dizer se há autocarros?", ["Transportes", "Autocarro"]),
     Phrase("Qual é o Autocarro que vai para o Hospital?", ["Transportes", "Autocarro", "Saúde", "Hospital"]),
@@ -15,12 +48,61 @@ class Motor {
     Phrase("Qual é o Autocarro que vai para a Farmácia mais próxima?", ["Transportes", "Autocarro", "Saúde", "Farmácia"]),
     Phrase("Qual é o Autocarro que vai para a Clínica mais próxima?", ["Transportes", "Autocarro", "Saúde", "Clínica"]),
     Phrase("Qual é o Autocarro que vai para o Veterinário mais próximo?", ["Transportes", "Autocarro", "Saúde", "Veterinário"]),
-    Phrase("Qual é o Autocarro que vai para o Supermercado mais próximo?", ["Transportes", "Autocarro", "Compras", "Superfícies Comerciais", "Supermercado"]),
+    Phrase("Qual é o Autocarro que vai para o Centro Comercial mais próximo?", ["Transportes", "Autocarro", "Compras", "Superfícies Comerciais"]),
+    Phrase("Qual é o Autocarro que vai para o Hipermercado mais próximo?", ["Transportes", "Autocarro", "Compras", "Superfícies Comerciais", "Mercado"]),
+    Phrase("Qual é o Autocarro que vai para o Supermercado mais próximo?", ["Transportes", "Autocarro", "Compras", "Superfícies Comerciais", "Mercado"]),
     Phrase("Qual é o Autocarro que vai para o Mercado mais próximo?", ["Transportes", "Autocarro", "Compras", "Superfícies Comerciais", "Mercado"]),
-    Phrase("Qual é o Autocarro que vai para o Minimercado mais próximo?", ["Transportes", "Autocarro", "Compras", "Superfícies Comerciais", "Minimercado"]),
+    Phrase("Qual é o Autocarro que vai para o Minimercado mais próximo?", ["Transportes", "Autocarro", "Compras", "Superfícies Comerciais", "Mercado"]),
     Phrase("Qual é o Autocarro que vai para a Feira mais próxima?", ["Transportes", "Autocarro", "Compras", "Feira"]),
+
+    // Direitos.
+    Phrase("Tenho atendimento prioritário.", ["Direitos"]),
+    Phrase("Sou isento de taxas moderadoras.", ["Direitos"]),
+    Phrase("Tenho direito a desconto por deficiência.", ["Direitos"]),
+
+    // Alimentação.
+    Phrase("Pode tirar X do prato?", ["Alimentação", "Restauração", "Alergia"]),
+    Phrase("Pode tirar X do prato?", ["Alimentação", "Restauração", "Informações"]),
+    Phrase("Isto contém estes alergéneos?", ["Alimentação", "Restauração", "Alergia"]), // TODO: Integrar com Alergias do perfil.
+    Phrase("Sou intolerante à lactose.", ["Alimentação", "Restauração", "Alergia"]), // Idem.
+    Phrase("Sou intolerante ao glúten.", ["Alimentação", "Restauração", "Alergia"]), // Idem.
+    Phrase("Sou intolerante ao marisco.", ["Alimentação", "Restauração", "Alergia"]), // Idem.
+
+    Phrase("Sou vegan, posso consumir este prato?", ["Alimentação", "Restauração", "Vegan"]),
+    Phrase("Sou vegetariano, posso consumir este prato?", ["Alimentação", "Restauração", "Vegan"]),
+    Phrase("Qual é o prato do dia?", ["Alimentação", "Restauração", "Informações"]),
+    Phrase("O que é que me recomenda?", ["Alimentação", "Restauração", "Informações"]),
+    Phrase("Existem mesas disponíveis?", ["Alimentação", "Restauração", "Informações"]),
+    Phrase("Gostava de marcar uma reserva.", ["Alimentação", "Restauração"]),
+    Phrase("Gostava de marcar uma reserva.", ["Alimentação", "Restauração", "Informações"]),
+    Phrase("Quero a conta, se faz favor.", ["Alimentação", "Restauração", "Pagamento"]),
+    Phrase("Aceitam Multibanco?", ["Alimentação","Restauração", "Pagamento"]),
+    Phrase("Aceitam Cartão de Alimentação?", ["Alimentação","Restauração", "Pagamento"]),
+
+    // Compras.
+    Phrase("Aceitam Multibanco?", ["Compras", "Pagamento"]),
+    Phrase("Aceitam Cartão de Alimentação?", ["Compras", "Pagamento"]),
+    Phrase("Quero fatura com Número de Identificação Fiscal (NIF).", ["Compras", "Pagamento"]),
+    Phrase("Este produto tem desconto?", ["Compras", "Informações", "Preço"]),
+    Phrase("Qual é o preço deste produto?", ["Compras", "Informações", "Preço"]),
+    Phrase("Tem este produto em vermelho?", ["Compras", "Informações", "Cor"]),
+    Phrase("Tem este produto em azul?", ["Compras", "Informações", "Cor"]),
+    Phrase("Tem este produto em verde?", ["Compras", "Informações", "Cor"]),
+    Phrase("Tem este produto em amarelo?", ["Compras", "Informações", "Cor"]),
+    Phrase("Tem este produto em branco?", ["Compras", "Informações", "Cor"]),
+    Phrase("Tem este produto em preto?", ["Compras", "Informações", "Cor"]),
+    Phrase("Tem este produto em cor-de-rosa?", ["Compras", "Informações", "Cor"]),
+    Phrase("Tem este produto em cor-de-laranja?", ["Compras", "Informações", "Cor"]),
+    Phrase("Tem este produto em roxo?", ["Compras", "Informações", "Cor"]),
+    Phrase("Quero trocar este produto.", ["Compras", "Informações", "Trocas e Devoluções"]),
+    Phrase("Quero devolver este produto.", ["Compras", "Informações", "Trocas e Devoluções"]),
+    Phrase("O produto X está disponível?", ["Compras", "Informações", "Produto"]),
+    Phrase("Gostava de encomendar o produto X.", ["Compras", "Informações", "Produto"]),
+    Phrase("O meu produto está avariado. Queria pôr a arranjar.", ["Compras", "Informações", "Produto"]),
+
     // Direções.
     Phrase("Onde é o Hospital mais próximo?", ["Direções", "Saúde", "Hospital"]),
+    Phrase("Onde é o Hospital Pediátrico mais próximo?", ["Direções", "Saúde", "Hospital"]),
     Phrase("Onde é o Centro de Saúde mais próximo?", ["Direções", "Saúde", "Centro de Saúde"]),
     Phrase("Onde é a Farmácia mais próxima?", ["Direções", "Saúde", "Farmácia"]),
     Phrase("Onde é a Clínica mais próxima?", ["Direções", "Saúde", "Clínica"]),
@@ -35,21 +117,14 @@ class Motor {
     Phrase("Onde é a praça de Táxis mais próxima?", ["Direções", "Transportes", "Táxi"]),
     Phrase("Pode me dizer se existem táxis por perto?", ["Direções", "Transportes", "Táxi"]),
     Phrase("Onde é a Superfície Comercial mais próxima?", ["Direções", "Compras", "Superfícies Comerciais"]),
+    Phrase("Onde é a Loja mais próxima?", ["Direções", "Compras", "Superfícies Comerciais"]),
     Phrase("Onde é a Feira Local?", ["Direções", "Compras", "Feira"]),
     Phrase("Onde é que eu estou?", ["Direções", "Viagem", "Minha Posição"]),
-    Phrase("Pode me dizer como chego a este sítio?", ["Direções", "Viagem", "Destino"]), // TODO: Estudar possibilidade de integrar com perfil.
+    Phrase("Pode me dizer como chego a este sítio?", ["Direções", "Viagem", "Destino"]),
     Phrase("Onde é o Café mais próximo?", ["Direções", "Alimentação", "Café"]),
     Phrase("Onde é o Restaurante mais próximo?", ["Direções", "Alimentação", "Restauração"]),
     Phrase("Onde é o Bar mais próximo?", ["Direções", "Alimentação", "Bar"]),
-    // Alimentação.
-    Phrase("Isto contém estes alergéneos?", ["Alimentação", "Restauração", "Alergia"]), // TODO: Integrar com Alergias do perfil.
-    Phrase("Sou vegan, posso consumir este prato?", ["Alimentação", "Restauração", "Vegan"]),
-    Phrase("Sou vegetariano, posso consumir este prato?", ["Alimentação", "Restauração", "Vegan"]),
-    Phrase("O que é que me recomenda?", ["Alimentação", "Restauração"]),
-    Phrase("Existem mesas disponíveis?", ["Alimentação", "Restauração"]),
-    Phrase("Gostava de marcar uma reserva.", ["Alimentação", "Restauração"]),
-    // Compras.
-    Phrase("Qual é o preço deste produto?", ["Compras", "Superfícies Comerciais"]),
+    Phrase("Onde é a casa de banho mais próxima?", ["Direções", "Higiene"]),
   ];
 
   refresh(List<String> tags) {
@@ -65,8 +140,12 @@ class Motor {
       len = this.phrases.length;
     }
 
-    for (var i = 0; i < len; i++) {
-      result.add(this.phrases[i].toString());
+    for (var i = 0; i < len && i < this.phrases.length; i++) {
+      if (result.contains(this.phrases[i].toString())) {
+        len++;
+      } else {
+        result.add(this.phrases[i].toString());
+      }
     }
 
     return result;
