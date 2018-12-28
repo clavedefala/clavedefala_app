@@ -425,6 +425,10 @@ class _TagColumnState extends State<TagColumn> {
   _goBack() {
     if (this.edit == true) {
       setState(() {
+        SystemChrome.setPreferredOrientations([
+          DeviceOrientation.landscapeRight,
+          DeviceOrientation.landscapeLeft,
+        ]);
         this.edit = false;
       });
       return false;
@@ -453,6 +457,10 @@ class _TagColumnState extends State<TagColumn> {
     try {
       if (this.edit == true) {
         setState(() {
+          SystemChrome.setPreferredOrientations([
+            DeviceOrientation.landscapeRight,
+            DeviceOrientation.landscapeLeft,
+          ]);
           this.edit = false;
         });
         return false;
@@ -534,6 +542,12 @@ class _TagColumnState extends State<TagColumn> {
 
   _editPhrase() {
     setState(() {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeRight,
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ]);
       this.edit = true;
     });
   }
