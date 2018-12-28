@@ -2,7 +2,7 @@
 name: Pedido de Funcionalidade
 about: Sugira uma ideia para a Clave de Fala!
 title: "[REQ] "
-labels: ''
+labels: melhoria
 assignees: ''
 
 ---
