@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'ClaveTextField.dart';
+import 'clave_text_field.dart';
 import 'motor.dart';
 
 import 'package:flutter_tts/flutter_tts.dart';
@@ -68,7 +68,7 @@ class TagItem extends StatelessWidget {
   }
 }
 
-// Classe para criação de Widget que representa um widget.
+// Classe para criação de Widget que representa uma frase.
 class PhraseItem extends StatelessWidget {
   const PhraseItem(this.phrase, this.color, this.tagColumn);
 
@@ -77,6 +77,7 @@ class PhraseItem extends StatelessWidget {
   final _TagColumnState tagColumn;
 
   Widget _buildPhrase(BuildContext context) {
+    print("Normal: " + this.phrase);
     return InkWell(
       child: Container(
         padding: EdgeInsets.only(
@@ -85,7 +86,13 @@ class PhraseItem extends StatelessWidget {
         ),
         child: Center(
           child: Text(
-            this.phrase,
+            this.phrase.replaceAllMapped(
+                new RegExp(r'{\w+}', caseSensitive: false), (Match m) {
+              print("match:" + m.group(0));
+              String value = this.tagColumn.motor.readValue(m.group(0));
+              print("value:" + value);
+              return value;
+            }),
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.black,
@@ -98,7 +105,9 @@ class PhraseItem extends StatelessWidget {
         color: Color(this.color),
       ),
       onTap: () {
-        this.tagColumn._speak(this.phrase);
+        this.tagColumn._speak(this.phrase.replaceAllMapped(
+            new RegExp(r'{\w+}', caseSensitive: false),
+            (Match m) => this.tagColumn.motor.readValue(m.group(0))));
       },
     );
   }
@@ -110,7 +119,7 @@ class PhraseItem extends StatelessWidget {
   }
 }
 
-// Classe para criação de Widget que representa um widget.
+// Classe para criação de Widget que representa uma sugestão pequena de frase (que fica na parte inferior).
 class SmallPhraseItem extends StatelessWidget {
   const SmallPhraseItem(this.phrase, this.color, this.tagColumn);
 
@@ -119,6 +128,7 @@ class SmallPhraseItem extends StatelessWidget {
   final _TagColumnState tagColumn;
 
   Widget _buildPhrase(BuildContext context) {
+    print("Small: " + this.phrase);
     return InkWell(
       child: Container(
         padding: EdgeInsets.only(
@@ -127,7 +137,9 @@ class SmallPhraseItem extends StatelessWidget {
         ),
         child: Center(
           child: Text(
-            this.phrase,
+            this.phrase.replaceAllMapped(
+                new RegExp(r'{\w+}', caseSensitive: false),
+                (Match m) => this.tagColumn.motor.readValue(m.group(0))),
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.black,
@@ -140,7 +152,9 @@ class SmallPhraseItem extends StatelessWidget {
         color: Color(this.color),
       ),
       onTap: () {
-        this.tagColumn._speak(this.phrase);
+        this.tagColumn._speak(this.phrase.replaceAllMapped(
+            new RegExp(r'{\w+}', caseSensitive: false),
+            (Match m) => this.tagColumn.motor.readValue(m.group(0))));
       },
     );
   }
@@ -153,14 +167,20 @@ class SmallPhraseItem extends StatelessWidget {
 }
 
 class TagColumn extends StatefulWidget {
+  TagColumn(this.motor);
+
+  final Motor motor;
+
   @override
-  _TagColumnState createState() => _TagColumnState();
+  _TagColumnState createState() => _TagColumnState(this.motor);
 }
 
 enum TtsState { playing, stopped }
 
 // Classe que representa a coluna que mostra as tags atuais.
 class _TagColumnState extends State<TagColumn> {
+  _TagColumnState(this.motor);
+
   // Lista atual de tags.
   List<Tag> tags;
 
@@ -209,7 +229,7 @@ class _TagColumnState extends State<TagColumn> {
   }
 
   initialize() {
-    this.initTts();
+    this.initTts(); // Text-To-Speech
 
     // TODO: Escrever aqui todas as tags existentes.
     this.tags = [
@@ -402,7 +422,6 @@ class _TagColumnState extends State<TagColumn> {
     ];
     this.pastTags = [];
     this.stringTags = [];
-    this.motor = Motor();
   }
 
   void refresh(List<Tag> tags, Tag tag) {
@@ -598,33 +617,47 @@ class _TagColumnState extends State<TagColumn> {
         }
         phraseList.add(PhraseItem(phrase, color, this));
       }
-      return Column(
+      return Stack(
         children: <Widget>[
-          Container(
-            padding: EdgeInsets.fromLTRB(0.0, 4.0, 0.0, 4.0),
-            child: Text(
-              this
-                  .stringTags
-                  .toString()
-                  .replaceAll("[", "")
-                  .replaceAll("]", ""),
+          Column(
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.fromLTRB(0.0, 4.0, 0.0, 4.0),
+                child: Text(
+                  this
+                      .stringTags
+                      .toString()
+                      .replaceAll("[", "")
+                      .replaceAll("]", ""),
+                ),
+              ),
+              Expanded(
+                child: Dismissible(
+                  key: Key("suggest"),
+                  onDismissed: (direction) {
+                    setState(() {
+                      this._goBack();
+                    });
+                  },
+                  child: ListView(
+                    physics: BouncingScrollPhysics(),
+                    key: Key("suggest"),
+                    children: phraseList,
+                  ),
+                ),
+              )
+            ],
+          ),
+          Positioned(
+            right: 8.0,
+            bottom: 8.0,
+            child: FloatingActionButton(
+              onPressed: () => this._addPhraseDialog(),
+              child: Icon(Icons.add, color: Colors.white),
+              tooltip: "Adicionar frase.",
+              backgroundColor: Color(0xFFF50057),
             ),
           ),
-          Expanded(
-            child: Dismissible(
-              key: Key("suggest"),
-              onDismissed: (direction) {
-                setState(() {
-                  this._goBack();
-                });
-              },
-              child: ListView(
-                physics: BouncingScrollPhysics(),
-                key: Key("suggest"),
-                children: phraseList,
-              ),
-            ),
-          )
         ],
       );
     } else {
@@ -668,13 +701,107 @@ class _TagColumnState extends State<TagColumn> {
               child: column,
             ),
           ),
-          Container(
-            child:
-                SmallPhraseItem(this.motor.getPhrases()[0], 0xFFFAFAFA, this),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Center(
+                  child: SmallPhraseItem(
+                      this.motor.getPhrases()[0], 0xFFFAFAFA, this),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.all(8.0),
+                child: FloatingActionButton(
+                  onPressed: () => this._addPhraseDialog(),
+                  child: Icon(Icons.add, color: Colors.white),
+                  tooltip: "Adicionar frase.",
+                  backgroundColor: Color(0xFFF50057),
+                ),
+              )
+            ],
           ),
         ],
       );
     }
+  }
+
+  void _addPhraseDialog() {
+    String newPhrase = "";
+    showDialog(
+      context: context,
+      builder: (_) => new AlertDialog(
+            title: new Text(
+              "Nova Frase",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: "Catamaran",
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ClaveTextField(
+                  initialValue: "",
+                  autofocus: true,
+                  onChanged: (String newVal) {
+                    if (newVal != null) {
+                      newPhrase = newVal;
+                    }
+                  },
+                ),
+                Container(
+                  width: double.infinity,
+                  color: Colors.grey[100],
+                  child: Text(
+                    this
+                        .stringTags
+                        .toString()
+                        .replaceAll("[", "")
+                        .replaceAll("]", ""),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: "Catamaran",
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                )
+              ],
+            ),
+            actions: <Widget>[
+              ButtonBar(
+                children: <Widget>[
+                  FloatingActionButton(
+                    elevation: 0.0,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    backgroundColor: Colors.red,
+                    child: Icon(Icons.cancel),
+                  ),
+                  FloatingActionButton(
+                    elevation: 0.0,
+                    onPressed: () {
+                      motor.addNewPhrase(
+                        newPhrase,
+                        this
+                            .stringTags
+                            .toString()
+                            .replaceAll("[", "")
+                            .replaceAll("]", ""),
+                      );
+                      Navigator.pop(context);
+                    },
+                    backgroundColor: Colors.green,
+                    child: Icon(Icons.add),
+                  ),
+                ],
+              )
+            ],
+          ),
+    );
   }
 
   @override

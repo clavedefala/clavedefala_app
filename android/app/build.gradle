@@ -32,8 +32,8 @@ android {
         applicationId "eu.clavedefala.clavedefalaapp"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 4
-        versionName "normal-v0.4"
+        versionCode 10
+        versionName "normal-v1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
